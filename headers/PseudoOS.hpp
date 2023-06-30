@@ -20,7 +20,7 @@ class PseudoOS {
 public:
     PseudoOS();
     static PseudoOS& GetInstance();
-    bool Run(ofstream* file1, ofstream* file2);
+    bool Run(fstream* file1, fstream* file2);
 };
 
 #endif

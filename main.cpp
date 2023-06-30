@@ -11,12 +11,17 @@ int main(int argc, char *argv[]) {
 
     // abre arquivos
     string filenameA = argv[1];
-    ofstream* fileA = new ofstream();
+    fstream* fileA = new fstream();
     fileA->open(filenameA.c_str());
 
     string filenameB = argv[2];
-    ofstream* fileB = new ofstream();
+    fstream* fileB = new fstream();
     fileB->open(filenameB.c_str());
+
+    if (!(fileA->is_open()) && !(fileB->is_open())) {
+        cout << "Erro ao abrir arquivos!" << endl;
+        return 0;
+    }
 
     // executa sistema passando arquivos
     bool r;
@@ -29,6 +34,9 @@ int main(int argc, char *argv[]) {
     } else {
         cout << "Sistema executou com erros." << endl;
     }
+
+    fileA->close();
+    fileB->close();
 
     return 0;
 }

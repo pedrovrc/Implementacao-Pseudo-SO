@@ -13,7 +13,7 @@ PseudoOS& PseudoOS::GetInstance() {
     return system;
 }
 
-bool PseudoOS::Run (ofstream* file1, ofstream* file2) {
+bool PseudoOS::Run (fstream* file1, fstream* file2) {
     // codigo vai aqui
     return true;
 }
