@@ -20,7 +20,10 @@ class PseudoOS {
 public:
     PseudoOS();
     static PseudoOS& GetInstance();
+    
     bool Run(fstream* file1, fstream* file2);
+    bool ReadProcesses(fstream* file);
+    bool ReadFileSystem(fstream* file);
 };
 
 #endif
