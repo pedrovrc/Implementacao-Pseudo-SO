@@ -14,6 +14,17 @@ PseudoOS& PseudoOS::GetInstance() {
 }
 
 bool PseudoOS::Run (fstream* file1, fstream* file2) {
-    // codigo vai aqui
+    // le arquivo 1
+    // armazena detalhes dos processos
+
+    // le arquivo 2
+    // atualiza estado do sistema de arquivos
+    
+    // cria dispatcher
+
+    // executa lista de processos em ordem
+    
+    // imprimir historico das operacoes do sistema de arquivos
+    // imprimir mapa atual de ocupacao do disco
     return true;
 }
