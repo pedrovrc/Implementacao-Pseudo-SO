@@ -4,31 +4,32 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class ProcessManager {
-
-public:
-    static ProcessManager& GetInstance();
-};
-
 class Process {
     
 public:
     int PID;
+    int startTime;
     int priority;
-    int memoffset;
+    int processingTime;
     int size;
     bool printer;
     bool scanner;
     bool driver;
+    int disk;
 
-    Process ();
-    Process( int ID,
-             int CPUpriority,
-             int offset,
-             int block_size,
-             bool print_use,
-             bool scanner_use,
-             bool driver_use );
+    Process();
+    void Reset();
+};
+
+class ProcessManager {
+    vector<Process> processList;
+    int processCount;
+public:
+    ProcessManager();
+    static ProcessManager& GetInstance();
+    void AddProcess(Process& in);
+    int GetListSize();
+    void PrintList();
 };
 
 #endif

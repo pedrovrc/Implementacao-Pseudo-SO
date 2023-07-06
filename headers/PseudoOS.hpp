@@ -22,8 +22,8 @@ public:
     static PseudoOS& GetInstance();
     
     bool Run(fstream* file1, fstream* file2);
-    bool ReadProcesses(fstream* file);
-    bool ReadFileSystem(fstream* file);
+    bool ReadProcessInput(fstream* file);
+    bool ReadFileSystemInput(fstream* file);
 };
 
 #endif
