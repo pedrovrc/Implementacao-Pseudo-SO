@@ -14,11 +14,12 @@ public:
     int size;
     bool printer;
     bool scanner;
-    bool driver;
+    bool modem;
     int disk;
 
     Process();
     void Reset();
+    void PrintExecution();
 };
 
 class ProcessManager {
@@ -28,6 +29,8 @@ public:
     ProcessManager();
     static ProcessManager& GetInstance();
     void AddProcess(Process& in);
+    bool ProcessExists(int PID);
+    Process& GetProcess(int PID);
     int GetListSize();
     void PrintList();
 };

@@ -9,6 +9,7 @@ using namespace std;
 class Dispatcher {
 
 public:
+    static Dispatcher& GetInstance();
     void PrintProcess(Process& proc);
 };
 

@@ -27,8 +27,8 @@ public:
 
 class FileManager {
     vector<File> fileList;
-    vector<bool> bitMap;
     vector<FSOperation> operationList;
+    vector<bool> bitMap;
 public:
     int diskSize;
     int occupiedSegments;

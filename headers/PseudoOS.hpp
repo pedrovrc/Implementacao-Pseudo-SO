@@ -9,6 +9,7 @@ using namespace std;
 #include "Process.hpp"
 #include "Queue.hpp"
 #include "Resource.hpp"
+#include "Dispatcher.hpp"
 
 class PseudoOS {
     FileManager fileManager;

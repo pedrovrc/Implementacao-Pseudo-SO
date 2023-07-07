@@ -8,6 +8,7 @@ class MemoryManager {
 
 public:
     static MemoryManager& GetInstance();
+    int GetOffset(int PID);
 };
 
 #endif

@@ -19,6 +19,24 @@ void ProcessManager::AddProcess(Process& in) {
     processCount++;
 }
 
+bool ProcessManager::ProcessExists(int PID) {
+    for (int i = 0; i < processCount; i++) {
+        if (processList[i].PID == PID) {
+            return true;
+        }
+    }
+    return false;
+}
+
+Process& ProcessManager::GetProcess(int PID) {
+    for (int i = 0; i < processCount; i++) {
+        if (processList[i].PID == PID) {
+            return processList[i];
+        }
+    }
+    return *new Process;
+}
+
 int ProcessManager::GetListSize() {
     return processList.size();
 }
@@ -49,7 +67,7 @@ Process::Process() {
     size = 0;
     printer = false;
     scanner = false;
-    driver = false;
+    modem = false;
     disk = 0;
 }
 
@@ -61,6 +79,14 @@ void Process::Reset() {
     size = 0;
     printer = false;
     scanner = false;
-    driver = false;
+    modem = false;
     disk = 0;
+}
+
+void Process::PrintExecution() {
+    cout << "process " << PID << " =>" << endl;
+    for (int i = 0; i < processingTime; i++) {
+        cout << "P" << PID << " instruction " << i+1 << endl;
+    }
+    cout << "P" << PID << " return SIGINT" << endl << endl;
 }
