@@ -38,7 +38,7 @@ void ProcessManager::PrintList() {
         cout << "Disk: " << processList[i].priority << endl;
         cout << "--------------------" << endl << endl;
     }
-    cout << "------------ End of List ------------" << endl;
+    cout << "------------ End of List ------------" << endl << endl;
 }
 
 Process::Process() {

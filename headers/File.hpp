@@ -4,12 +4,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class FileManager {
-
-public:
-    static FileManager& GetInstance();
-};
-
 class File {
 
 public:
@@ -18,7 +12,32 @@ public:
     int size;
 
     File();
-    File(string name, int offset, int size);
+};
+
+class FSOperation {
+
+public:
+    int PID;
+    bool opcode;
+    string filename;
+    int filesize;
+
+    FSOperation();
+};
+
+class FileManager {
+    vector<File> fileList;
+    vector<bool> bitMap;
+    vector<FSOperation> operationList;
+public:
+    int diskSize;
+    int occupiedSegments;
+
+    static FileManager& GetInstance();
+    void AddFile(File& in);
+    void AddOperation(FSOperation& in);
+    void PrintFiles();
+    void PrintOperations();
 };
 
 #endif

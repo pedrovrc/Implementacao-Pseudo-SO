@@ -31,6 +31,8 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     // atualiza estado do sistema de arquivos
     result = ReadFileSystemInput(file2);
     if (result) {
+        fileManager.PrintFiles();   // debug
+        fileManager.PrintOperations();  // debug
         cout << "Arquivo de sistema de arquivos lido com sucesso" << endl;
     } else {
         cout << "Erro ao ler arquivo de sistema de arquivos" << endl;
@@ -48,12 +50,12 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
 }
 
 bool PseudoOS::ReadProcessInput(fstream* file) {
+    if(file->is_open() == false) return false;
+    
     string line;
     string buffer;
     Process holder;
     int i = 0, value, value_counter = 0;
-
-    if(file->is_open() == false) return false;
 
     // leitura do arquivo de entrada linha a linha
     while(!file->eof()) {
@@ -93,5 +95,75 @@ bool PseudoOS::ReadProcessInput(fstream* file) {
 }
 
 bool PseudoOS::ReadFileSystemInput(fstream* file) {
+
+    if(file->is_open() == false) return false;
+
+    string line;
+    string buffer;
+
+    // armazena quantidade de blocos do disco
+    getline(*file, line);
+    fileManager.diskSize = atoi(line.c_str());
+
+    // armazena quantidade de segmentos ocupados
+    getline(*file, line);
+    fileManager.occupiedSegments = atoi(line.c_str());
+
+    int i, value_counter;
+    File holder;
+
+    // le informacoes de cada arquivo
+    for (int j = 0; j < fileManager.occupiedSegments; j++) {
+        getline(*file, line);
+        i = 0;
+        value_counter = 0;
+
+        while(i < line.size()) {
+            // salva numero em buffer ate encontrar virgula
+            buffer = "";
+            do {
+                buffer += line[i];
+                i++;
+            } while (i < line.size() && line[i] != ',');
+            i += 2;    // pula espaco apos virgula
+
+            if (value_counter == 0) holder.name = buffer;
+            else if (value_counter == 1) holder.offset = atoi(buffer.c_str());
+            else if (value_counter == 2) holder.size = atoi(buffer.c_str());
+
+            value_counter++;
+        }
+
+        fileManager.AddFile(holder);
+    }
+
+    FSOperation opholder;
+
+    // le informacoes de cada operacao
+    while(!file->eof()) {
+        getline(*file, line);
+        i = 0;
+        value_counter = 0;
+
+        while(i < line.size()) {
+            // salva numero em buffer ate encontrar virgula
+            buffer = "";
+            do {
+                buffer += line[i];
+                i++;
+            } while (i < line.size() && line[i] != ',');
+            i += 2;    // pula espaco apos virgula
+
+            if (value_counter == 0) opholder.PID = atoi(buffer.c_str());
+            else if (value_counter == 1) opholder.opcode = atoi(buffer.c_str());
+            else if (value_counter == 2) opholder.filename = buffer;
+            else if (value_counter == 3) opholder.filesize = atoi(buffer.c_str());
+
+            value_counter++;
+        }
+
+        fileManager.AddOperation(opholder);
+    }
+
     return true;
 }
