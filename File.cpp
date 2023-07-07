@@ -49,4 +49,6 @@ FSOperation::FSOperation() {
     opcode = 0;
     filename = "";
     filesize = 0;
+    success = false;
+    reason = "";
 }

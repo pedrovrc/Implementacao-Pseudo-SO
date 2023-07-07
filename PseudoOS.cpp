@@ -50,9 +50,12 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
 
     // executa lista de processos e operacoes em ordem
     
-    // imprimir historico das operacoes do sistema de arquivos
-    // imprimir mapa atual de ocupacao do disco
     
+    // imprimir historico das operacoes do sistema de arquivos
+    dispatcher.PrintOperationHistory();
+    // imprimir mapa atual de ocupacao do disco
+    dispatcher.PrintFileSystemState();
+
     return true;
 }
 

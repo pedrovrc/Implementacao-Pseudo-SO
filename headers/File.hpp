@@ -21,15 +21,18 @@ public:
     bool opcode;
     string filename;
     int filesize;
+    bool success;
+    string reason;
 
     FSOperation();
 };
 
 class FileManager {
+
+public:
     vector<File> fileList;
     vector<FSOperation> operationList;
     vector<bool> bitMap;
-public:
     int diskSize;
     int occupiedSegments;
 

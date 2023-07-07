@@ -1,5 +1,6 @@
 #include "Dispatcher.hpp"
 #include "Memory.hpp"
+#include "File.hpp"
 
 Dispatcher& Dispatcher::GetInstance() {
     static Dispatcher process;
@@ -18,4 +19,25 @@ void Dispatcher::PrintProcess(Process& proc) {
     cout << "\tmodems: " << proc.modem << endl;
     cout << "\tdrives: " << proc.disk << endl;
     cout << endl;
+}
+
+void Dispatcher::PrintOperationHistory() {
+    cout << "File System =>" << endl;
+
+    FileManager fileManager = fileManager.GetInstance();
+
+    for (int i = 0; i < fileManager.operationList.size(); i++) {
+        if (fileManager.operationList[i].success) {
+            cout << "Operation " << i << " => Success" << endl;
+        } else {
+            cout << "Operation " << i << " => Failed" << endl;
+        }
+
+        cout << fileManager.operationList[i].reason << endl;
+    }
+    cout << endl;
+}
+
+void Dispatcher::PrintFileSystemState() {
+
 }

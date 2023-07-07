@@ -11,6 +11,8 @@ class Dispatcher {
 public:
     static Dispatcher& GetInstance();
     void PrintProcess(Process& proc);
+    void PrintOperationHistory();
+    void PrintFileSystemState();
 };
 
 #endif
