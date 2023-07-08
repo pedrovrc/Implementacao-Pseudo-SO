@@ -23,7 +23,7 @@ QueueManager* QueueManager::GetInstance() {
 
     Adiciona processo à fila de criação de processos.
 */
-void QueueManager::AddProcessCreation(Process& in) {
+void QueueManager::AddProcessCreation(Process* in) {
     creationQueue.push_back(in);
 }
 
@@ -34,9 +34,28 @@ void QueueManager::AddProcessCreation(Process& in) {
     Prioridade == 0 -> Fila de Tempo Real
     Prioridade != 0 -> Fila de Usuário
 */
-void QueueManager::AddProcessExecution(Process& in) {
-    if (in.priority == 0) realTimeQueue.push_back(in);
+void QueueManager::AddProcessExecution(Process* in) {
+    if (in->priority == 0) realTimeQueue.push_back(in);
     else userQueue.push_back(in);
+}
+
+/*
+    void QueueManager::RemoveFromExecQueue(int PID, int priority)
+
+    Remove o processo requisitado da fila de execução onde estiver.
+*/
+void QueueManager::RemoveFromExecQueue(int PID, int priority) {
+    if (priority == 0) {
+        // fila real time
+        for (int i = 0; i < realTimeQueue.size(); i++) {
+            if (realTimeQueue[i]->PID == PID) realTimeQueue.erase(realTimeQueue.begin() + i);
+        }
+    } else {
+        // fila user
+        for (int i = 0; i < userQueue.size(); i++) {
+            if (userQueue[i]->PID == PID) userQueue.erase(userQueue.begin() + i);
+        }
+    }
 }
 
 /*

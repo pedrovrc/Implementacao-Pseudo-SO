@@ -1,5 +1,5 @@
 Compilador = g++
-FLAGS = -ansi -std=c++11
+FLAGS = -ansi -std=c++11 -g
 LIBS = -lm
 
 TARGET = pseudoos

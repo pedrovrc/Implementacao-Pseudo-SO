@@ -11,9 +11,10 @@ using namespace std;
 */
 class Process {
     bool isRunning;
-    int instructionCount;
 
 public:
+    int instructionCount;
+
     int PID;
     int startTime;
     int priority;
@@ -48,7 +49,7 @@ public:
     static ProcessManager* GetInstance();
     void AddProcess(Process& in);
     bool ProcessExists(int PID);
-    Process* GetProcess(int PID);
+    // Process* GetProcess(int PID);
     int GetListSize();
     void PrintList();
 };

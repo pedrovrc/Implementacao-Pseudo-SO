@@ -25,7 +25,6 @@ ProcessManager* ProcessManager::GetInstance() {
 
     Se o número máximo de processos (1000) não tiver sido atingido, insere processo em processList.
     PID do processo é atribuído com base na contagem de processos atual, que é incrementada em seguida.
-    Requisita a adição do processo à fila de criação no Gerenciador de Filas.
 */
 void ProcessManager::AddProcess(Process& in) {
     if (processCount >= 1000) {
@@ -35,8 +34,6 @@ void ProcessManager::AddProcess(Process& in) {
     in.PID = processCount;
     processList.push_back(in);
     processCount++;
-
-    QueueManager::GetInstance()->AddProcessCreation(in);
 }
 
 /*
@@ -54,13 +51,14 @@ bool ProcessManager::ProcessExists(int PID) {
     return false;
 }
 
-/*
+/*  FUNÇÃO CAUSANDO PROBLEMAS
     Process* ProcessManager::GetProcess(int PID)
 
     Retorna ponteiro para o processo requisitado caso seja encontrado na lista de processos.
     Retorna ponteiro para objeto Process vazio caso contrário.
     Recomenda-se usar esse método em conjunto com ProcessManager::ProcessExists.
 */
+/*
 Process* ProcessManager::GetProcess(int PID) {
     for (int i = 0; i < processList.size(); i++) {
         if (processList[i].PID == PID) {
@@ -69,6 +67,7 @@ Process* ProcessManager::GetProcess(int PID) {
     }
     return new Process;
 }
+*/
 
 /*
     int ProcessManager::GetListSize()
@@ -166,8 +165,10 @@ void Process::ExecuteInstruction() {
         // print de instrucoes
         cout << "P" << PID << " instruction " << instructionCount << endl;
         instructionCount++;
-    } else {
-        // caso contrario, print final
+    }
+
+    if (instructionCount > processingTime) {
+        // print final
         cout << "P" << PID << " return SIGINT" << endl << endl;
     }
 }

@@ -17,12 +17,13 @@ class QueueManager {
     static QueueManager* instance;
 public:
     QueueManager();
-    vector<Process> creationQueue;
-    vector<Process> realTimeQueue;
-    vector<Process> userQueue;
+    vector<Process*> creationQueue;
+    vector<Process*> realTimeQueue;
+    vector<Process*> userQueue;
     static QueueManager* GetInstance();
-    void AddProcessCreation(Process& in);
-    void AddProcessExecution(Process& in);
+    void AddProcessCreation(Process* in);
+    void AddProcessExecution(Process* in);
+    void RemoveFromExecQueue(int PID, int priority);
     Process* GetUserProcess();
 };
 

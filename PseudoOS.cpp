@@ -8,11 +8,11 @@ PseudoOS* PseudoOS::instance;
 PseudoOS::PseudoOS() {
     if (instance != nullptr) return;
     instance = this;
-    fileManager = fileManager->GetInstance();
-    memoryManager = memoryManager->GetInstance();
-    processManager = processManager->GetInstance();
-    queueManager = queueManager->GetInstance();
-    resourceManager = resourceManager->GetInstance();
+    fileManager = FileManager::GetInstance();
+    memoryManager = MemoryManager::GetInstance();
+    processManager = ProcessManager::GetInstance();
+    queueManager = QueueManager::GetInstance();
+    resourceManager = ResourceManager::GetInstance();
     currentProcessID = -1;
 }
 
@@ -68,14 +68,16 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     Dispatcher* dispatcher = dispatcher->GetInstance();
 
     int quantumCount = 0, offset;
-    Process* holder;
+    Process* currentProcess = nullptr;
 
-    // enquanto houver processos a serem executados/criados
-    while (queueManager->creationQueue.empty() == false) {
+    // enquanto houver processos a serem executados/criados ou CPU estiver ocupada
+    while (queueManager->creationQueue.empty() == false || currentProcessID != -1) {
+        //cout << "quantum counter: " << quantumCount << endl << endl;
+
         // para cada processo na lista de processos de entrada
         for (int i = 0; i < queueManager->creationQueue.size(); i++) {   
             // checa se há processo para entrar nesse momento
-            if (queueManager->creationQueue[i].startTime == quantumCount) {
+            if (queueManager->creationQueue[i]->startTime == quantumCount) {
                 // processo entra na fila de execucao e sai da de criacao
                 queueManager->AddProcessExecution(queueManager->creationQueue[i]);
                 queueManager->creationQueue.erase(queueManager->creationQueue.begin() + i);
@@ -89,19 +91,20 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
 
             // pega processo prioritario
             if (queueManager->realTimeQueue.empty() == false) {
-                *holder = queueManager->realTimeQueue[0]; // FIFO
+                currentProcess = queueManager->realTimeQueue[0]; // FIFO
             } else {
-                holder = queueManager->GetUserProcess();
+                currentProcess = queueManager->GetUserProcess();
             }
 
             // se houver espaco na memoria
-            offset = memoryManager->findSpace(holder->size);
+            offset = memoryManager->findSpace(currentProcess->size);
             if (offset != -1) {
                 // se CPU estiver vaga
                 if (currentProcessID == -1) {
                     // processo toma posse da CPU
-                    currentProcessID = holder->PID;
-                    dispatcher->PrintProcess(*processManager->GetProcess(currentProcessID));
+                    currentProcessID = currentProcess->PID;
+                    queueManager->RemoveFromExecQueue(currentProcess->PID, currentProcess->priority);
+                    dispatcher->PrintProcess(*currentProcess);
                 }
             }
         }
@@ -109,8 +112,15 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
         // se CPU estiver ocupada por processo
         if (currentProcessID != -1) {
             // executa instrucao do processo
-            holder = processManager->GetProcess(currentProcessID);
-            holder->ExecuteInstruction();
+            currentProcess = &processManager->processList[currentProcessID];
+            currentProcess->ExecuteInstruction();
+
+            // se processo executou instrucao final
+            if (currentProcess->instructionCount > currentProcess->processingTime) {
+                // retira processo da CPU
+                currentProcessID = -1;
+                currentProcess = nullptr;
+            }
         }
  
         // implementar delay?
@@ -176,6 +186,12 @@ bool PseudoOS::ReadProcessInput(fstream* file) {
         // adiciona processo a lista
         processManager->AddProcess(holder);
     }
+
+    // adiciona processos a fila de criacao
+    for (int i = 0; i < processManager->processList.size(); i++) {
+        queueManager->AddProcessCreation(&processManager->processList[i]);
+    }
+
     return true;
 }
 

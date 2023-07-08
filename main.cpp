@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 
     // executa sistema passando arquivos
     bool r;
-    PseudoOS& system = system.GetInstance();
+    PseudoOS& system = PseudoOS::GetInstance();
     r = system.Run(fileA, fileB);
 
     // reporta execucao
