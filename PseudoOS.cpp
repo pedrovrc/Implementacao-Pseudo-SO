@@ -1,18 +1,39 @@
 #include "headers/PseudoOS.hpp"
 
+// ----------------------------------------------------
+// Essa região do código implementa o padrão singleton.
+
+PseudoOS* PseudoOS::instance;
+
 PseudoOS::PseudoOS() {
-    fileManager = fileManager.GetInstance();
-    memoryManager = memoryManager.GetInstance();
-    processManager = processManager.GetInstance();
-    queueManager = queueManager.GetInstance();
-    resourceManager = resourceManager.GetInstance();
+    if (instance != nullptr) return;
+    instance = this;
+    fileManager = fileManager->GetInstance();
+    memoryManager = memoryManager->GetInstance();
+    processManager = processManager->GetInstance();
+    queueManager = queueManager->GetInstance();
+    resourceManager = resourceManager->GetInstance();
+    currentProcessID = -1;
 }
 
 PseudoOS& PseudoOS::GetInstance() {
-    static PseudoOS system;
-    return system;
+    if (instance == nullptr) {
+		instance = new PseudoOS();
+	}
+		return *instance;
 }
+// ----------------------------------------------------
 
+/*
+    bool PseudoOS::Run (fstream* file1, fstream* file2)
+
+    Método principal da execução do Pseudo-SO.
+        - Lê e armazena de dados de entrada;
+        - Cria processo Dispatcher;
+        - Executa loop de criação e execução de processos;
+        - Executa loop de operações no sistema de arquivos; (ainda não implementado)
+        - Imprime mensagens finais do Dispatcher ao final da execução.
+*/
 bool PseudoOS::Run (fstream* file1, fstream* file2) {
     bool result = false;
     
@@ -20,7 +41,7 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     // armazena detalhes dos processos
     result = ReadProcessInput(file1);
     if (result) {
-        processManager.PrintList(); // debug
+        //processManager.PrintList(); // debug
         cout << "Arquivo de processos lido com sucesso" << endl;
     } else {
         cout << "Erro ao ler arquivo de processos" << endl;
@@ -31,24 +52,82 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     // atualiza estado do sistema de arquivos
     result = ReadFileSystemInput(file2);
     if (result) {
-        fileManager.PrintFiles();   // debug
-        fileManager.PrintOperations();  // debug
+        //fileManager.PrintFiles();   // debug
+        //fileManager.PrintOperations();  // debug
         cout << "Arquivo de sistema de arquivos lido com sucesso" << endl;
     } else {
         cout << "Erro ao ler arquivo de sistema de arquivos" << endl;
         return false;
     }
+    cout << endl;
     
     // cria dispatcher
+    Dispatcher* dispatcher = dispatcher->GetInstance();
 
-    // executa lista de processos em ordem
+    int quantumCount = 0, offset;
+    Process* holder;
+
+    // enquanto houver processos a serem executados/criados
+    while (queueManager->creationQueue.empty() == false) {
+        // para cada processo na lista de processos de entrada
+        for (int i = 0; i < queueManager->creationQueue.size(); i++) {   
+            // checa se há processo para entrar nesse momento
+            if (queueManager->creationQueue[i].startTime == quantumCount) {
+                // processo entra na fila de execucao e sai da de criacao
+                queueManager->AddProcessExecution(queueManager->creationQueue[i]);
+                queueManager->creationQueue.erase(queueManager->creationQueue.begin() + i);
+                i--;
+            }
+        }
+
+        // se houver processos em fila de execucao
+        if (queueManager->realTimeQueue.empty() == false ||
+            queueManager->userQueue.empty() == false) {
+
+            // pega processo prioritario
+            if (queueManager->realTimeQueue.empty() == false) {
+                *holder = queueManager->realTimeQueue[0]; // FIFO
+            } else {
+                holder = queueManager->GetUserProcess();
+            }
+
+            // se houver espaco na memoria
+            offset = memoryManager->findSpace(holder->size);
+            if (offset != -1) {
+                // se CPU estiver vaga
+                if (currentProcessID == -1) {
+                    // processo toma posse da CPU
+                    currentProcessID = holder->PID;
+                    dispatcher->PrintProcess(*processManager->GetProcess(currentProcessID));
+                }
+            }
+        }
+
+        // se CPU estiver ocupada por processo
+        if (currentProcessID != -1) {
+            // executa instrucao do processo
+            holder = processManager->GetProcess(currentProcessID);
+            holder->ExecuteInstruction();
+        }
+ 
+        // implementar delay?
+        quantumCount++;
+    }
     
     // imprimir historico das operacoes do sistema de arquivos
+    dispatcher->PrintOperationHistory();
+
     // imprimir mapa atual de ocupacao do disco
-    
+    dispatcher->PrintFileSystemState();
+
     return true;
 }
 
+/*
+    bool PseudoOS::ReadProcessInput(fstream* file)
+
+    Lê e armazena os dados do primeiro arquivo de entrada (arquivo de processos).
+*/
 bool PseudoOS::ReadProcessInput(fstream* file) {
     if(file->is_open() == false) return false;
     
@@ -80,20 +159,25 @@ bool PseudoOS::ReadProcessInput(fstream* file) {
             else if (value_counter == 1) holder.priority = value;
             else if (value_counter == 2) holder.processingTime = value;
             else if (value_counter == 3) holder.size = value;
-            else if (value_counter == 4) holder.printer = (bool)value;
-            else if (value_counter == 5) holder.scanner = (bool)value;
-            else if (value_counter == 6) holder.driver = (bool)value;
+            else if (value_counter == 4) holder.printer = value;
+            else if (value_counter == 5) holder.scanner = value;
+            else if (value_counter == 6) holder.modem = value;
             else if (value_counter == 7) holder.disk = value;
 
             value_counter++;
         }
 
         // adiciona processo a lista
-        processManager.AddProcess(holder);
+        processManager->AddProcess(holder);
     }
     return true;
 }
 
+/*
+    bool PseudoOS::ReadFileSystemInput(fstream* file)
+    
+    Lê e armazena os dados do segundo arquivos de entrada (arquivo de sistema de arquivos).
+*/
 bool PseudoOS::ReadFileSystemInput(fstream* file) {
 
     if(file->is_open() == false) return false;
@@ -103,17 +187,20 @@ bool PseudoOS::ReadFileSystemInput(fstream* file) {
 
     // armazena quantidade de blocos do disco
     getline(*file, line);
-    fileManager.diskSize = atoi(line.c_str());
+    fileManager->diskSize = atoi(line.c_str());
+    for (int i = 0; i < fileManager->diskSize; i++) {
+        fileManager->occupationMap.push_back('0');
+    }
 
     // armazena quantidade de segmentos ocupados
     getline(*file, line);
-    fileManager.occupiedSegments = atoi(line.c_str());
+    fileManager->occupiedSegments = atoi(line.c_str());
 
     int i, value_counter;
     File holder;
 
     // le informacoes de cada arquivo
-    for (int j = 0; j < fileManager.occupiedSegments; j++) {
+    for (int j = 0; j < fileManager->occupiedSegments; j++) {
         getline(*file, line);
         i = 0;
         value_counter = 0;
@@ -134,7 +221,12 @@ bool PseudoOS::ReadFileSystemInput(fstream* file) {
             value_counter++;
         }
 
-        fileManager.AddFile(holder);
+        fileManager->AddFile(holder);
+
+        // preenche o occupationMap
+        for (int k = holder.offset; k < holder.offset + holder.size; k++) {
+            fileManager->occupationMap[k] = holder.name[0];
+        }
     }
 
     FSOperation opholder;
@@ -162,7 +254,7 @@ bool PseudoOS::ReadFileSystemInput(fstream* file) {
             value_counter++;
         }
 
-        fileManager.AddOperation(opholder);
+        fileManager->AddOperation(opholder);
     }
 
     return true;

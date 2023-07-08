@@ -1,14 +1,32 @@
 #include "headers/Process.hpp"
+#include "headers/Queue.hpp"
+
+// ----------------------------------------------------
+// Essa região do código implementa o padrão singleton.
+
+ProcessManager* ProcessManager::instance;
 
 ProcessManager::ProcessManager() {
+    if (instance != nullptr) return;
+    instance = this;
     processCount = 0;
 }
 
-ProcessManager& ProcessManager::GetInstance() {
-    static ProcessManager manager;
-    return manager;
+ProcessManager* ProcessManager::GetInstance() {
+    if (instance == nullptr) {
+		instance = new ProcessManager();
+	}
+		return instance;
 }
+// ----------------------------------------------------
 
+/*
+    void ProcessManager::AddProcess(Process& in)
+
+    Se o número máximo de processos (1000) não tiver sido atingido, insere processo em processList.
+    PID do processo é atribuído com base na contagem de processos atual, que é incrementada em seguida.
+    Requisita a adição do processo à fila de criação no Gerenciador de Filas.
+*/
 void ProcessManager::AddProcess(Process& in) {
     if (processCount >= 1000) {
         cout << "Maximum number of processes reached!" << endl;
@@ -17,12 +35,56 @@ void ProcessManager::AddProcess(Process& in) {
     in.PID = processCount;
     processList.push_back(in);
     processCount++;
+
+    QueueManager::GetInstance()->AddProcessCreation(in);
 }
 
+/*
+    bool ProcessManager::ProcessExists(int PID)
+
+    Retorna verdadeiro se processo com PID fornecido for encontrado na lista de processos.
+    Retorna falso caso contrário.
+*/
+bool ProcessManager::ProcessExists(int PID) {
+    for (int i = 0; i < processCount; i++) {
+        if (processList[i].PID == PID) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/*
+    Process* ProcessManager::GetProcess(int PID)
+
+    Retorna ponteiro para o processo requisitado caso seja encontrado na lista de processos.
+    Retorna ponteiro para objeto Process vazio caso contrário.
+    Recomenda-se usar esse método em conjunto com ProcessManager::ProcessExists.
+*/
+Process* ProcessManager::GetProcess(int PID) {
+    for (int i = 0; i < processList.size(); i++) {
+        if (processList[i].PID == PID) {
+            return &processList[i];
+        }
+    }
+    return new Process;
+}
+
+/*
+    int ProcessManager::GetListSize()
+
+    Retorna o tamanho de processList.
+*/
 int ProcessManager::GetListSize() {
     return processList.size();
 }
 
+/*
+    void ProcessManager::PrintList()
+
+    Imprime no terminal todos os processos contidos em processList.
+    Criado para propósitos de debug.
+*/
 void ProcessManager::PrintList() {
     cout << "Process List:" << endl;
     cout << "Total number of processes: " << GetListSize() << endl << endl;
@@ -42,6 +104,9 @@ void ProcessManager::PrintList() {
 }
 
 Process::Process() {
+    isRunning = false;
+    instructionCount = 0;
+
     PID = 0;
     startTime = 0;
     priority = 0;
@@ -49,7 +114,7 @@ Process::Process() {
     size = 0;
     printer = false;
     scanner = false;
-    driver = false;
+    modem = false;
     disk = 0;
 }
 
@@ -61,6 +126,46 @@ void Process::Reset() {
     size = 0;
     printer = false;
     scanner = false;
-    driver = false;
+    modem = false;
     disk = 0;
+}
+
+/*
+    void Process::PrintExecution()
+
+    Simula uma execução completa do processo.
+    Criado para propósitos de debug.
+*/
+void Process::PrintExecution() {
+    cout << "process " << PID << " =>" << endl;
+    for (int i = 0; i < processingTime; i++) {
+        cout << "P" << PID << " instruction " << i+1 << endl;
+    }
+    cout << "P" << PID << " return SIGINT" << endl << endl;
+}
+
+/*
+    void Process::ExecuteInstruction()
+
+    Executa uma única instrução do processo a cada chamada, considerado o tempo de 1 quantum.
+*/
+void Process::ExecuteInstruction() {
+    // se processo não estiver em execucao
+    if (isRunning == false) {
+        // print inicial
+        cout << "process " << PID << " =>" << endl; 
+        // muda flag e incrementa contador de instrucoes (iniciar prints em 1)
+        isRunning = true;
+        instructionCount++;
+    }
+
+    // se processo estiver em execucao e nao tiver concluido seu tempo
+    if (instructionCount <= processingTime) {
+        // print de instrucoes
+        cout << "P" << PID << " instruction " << instructionCount << endl;
+        instructionCount++;
+    } else {
+        // caso contrario, print final
+        cout << "P" << PID << " return SIGINT" << endl << endl;
+    }
 }

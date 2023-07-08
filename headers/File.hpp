@@ -4,6 +4,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+/*
+    Class File
+
+    Classe responsável por representar um arquivo no sistema de arquivos do Pseudo-SO.
+*/
 class File {
 
 public:
@@ -14,6 +19,11 @@ public:
     File();
 };
 
+/*
+    Class FSOperation
+
+    Classe responsável por representar uma operação sobre o sistema de arquivos.
+*/
 class FSOperation {
 
 public:
@@ -21,19 +31,31 @@ public:
     bool opcode;
     string filename;
     int filesize;
+    bool success;
+    string reason;
 
     FSOperation();
 };
 
+/*
+    Class FileManager
+
+    Classe responsável por atuar como Gerenciador de Arquivos do SO.
+    Possui informações sobre o disco e os arquivos contidos nele, bem como operações que devem ser feitas sobre o sistema de arquivos.
+    Essa classe segue o padrão singleton.
+*/
 class FileManager {
-    vector<File> fileList;
-    vector<bool> bitMap;
-    vector<FSOperation> operationList;
+    static FileManager* instance;
+
 public:
+    vector<File> fileList;
+    vector<FSOperation> operationList;
+    vector<char> occupationMap;
     int diskSize;
     int occupiedSegments;
 
-    static FileManager& GetInstance();
+    FileManager();
+    static FileManager* GetInstance();
     void AddFile(File& in);
     void AddOperation(FSOperation& in);
     void PrintFiles();

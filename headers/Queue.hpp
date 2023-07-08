@@ -4,10 +4,26 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class QueueManager {
+#include "Process.hpp"
 
+/*
+    Class QueueManager
+
+    Classe responsável por implementar o Gerenciador de Filas do Pseudo-SO.
+    Possui as filas de processos a serem gerenciadas durante a execução do sistema.
+    Essa classe segue o padrão singleton.
+*/
+class QueueManager {
+    static QueueManager* instance;
 public:
-    static QueueManager& GetInstance();
+    QueueManager();
+    vector<Process> creationQueue;
+    vector<Process> realTimeQueue;
+    vector<Process> userQueue;
+    static QueueManager* GetInstance();
+    void AddProcessCreation(Process& in);
+    void AddProcessExecution(Process& in);
+    Process* GetUserProcess();
 };
 
 #endif

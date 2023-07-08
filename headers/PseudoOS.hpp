@@ -9,14 +9,23 @@ using namespace std;
 #include "Process.hpp"
 #include "Queue.hpp"
 #include "Resource.hpp"
+#include "Dispatcher.hpp"
 
+/*
+    Class PseudoOS
+
+    Classe que implementa o Pseudo-SO. Sua execução é dada pelo método Run.
+    Essa classe segue o padrão singleton.
+*/
 class PseudoOS {
-    FileManager fileManager;
-    MemoryManager memoryManager;
-    ProcessManager processManager;
-    QueueManager queueManager;
-    ResourceManager resourceManager;
-    
+    static PseudoOS* instance;
+    FileManager* fileManager;
+    MemoryManager* memoryManager;
+    ProcessManager* processManager;
+    QueueManager* queueManager;
+    ResourceManager* resourceManager;
+    int currentProcessID;
+
 public:
     PseudoOS();
     static PseudoOS& GetInstance();

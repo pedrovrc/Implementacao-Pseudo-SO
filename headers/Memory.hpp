@@ -4,10 +4,21 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+/*
+    Class MemoryManager
+
+    Classe que representa o Gerenciador de Memória do Pseudo-SO.
+    Essa classe segue o padrão singleton.
+*/
 class MemoryManager {
+    vector<int> occupationMap;
+    static MemoryManager* instance;
 
 public:
-    static MemoryManager& GetInstance();
+    MemoryManager();
+    static MemoryManager* GetInstance();
+    int GetOffset(int PID);
+    int findSpace(int process_size);
 };
 
 #endif

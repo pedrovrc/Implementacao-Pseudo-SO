@@ -1,18 +1,47 @@
 #include "headers/File.hpp"
 
-FileManager& FileManager::GetInstance() {
-    static FileManager manager;
-    return manager;
+// ----------------------------------------------------
+// Essa região do código implementa o padrão singleton.
+
+FileManager* FileManager::instance;
+
+FileManager::FileManager() {
+    if (instance != nullptr) return;
+    instance = this;
 }
 
+FileManager* FileManager::GetInstance() {
+    if (instance == nullptr) {
+		instance = new FileManager();
+	}
+		return instance;
+}
+// ----------------------------------------------------
+
+/*
+    void FileManager::AddFile(File& in)
+
+    Adiciona objeto do tipo File no vetor fileList.
+*/
 void FileManager::AddFile(File& in) {
     fileList.push_back(in);
 }
 
+/*
+    void FileManager::AddOperation(FSOperation& in)
+
+    Adiciona objeto do tipo FSOperation no vetor operationList.
+*/
 void FileManager::AddOperation(FSOperation& in) {
     operationList.push_back(in);
 }
 
+/*
+    void FileManager::PrintFiles()
+
+    Imprime no terminal todos os arquivos presentes em fileList.
+    Criado para propósitos de debug.
+*/
 void FileManager::PrintFiles() {
     cout << "File List:" << endl;
     cout << "Total number of files: " << occupiedSegments << endl << endl;
@@ -25,6 +54,12 @@ void FileManager::PrintFiles() {
     cout << "------------ End of List ------------" << endl << endl;
 }
 
+/*
+    void FileManager::PrintOperations()
+
+    Imprime no terminal todas as operações presentes em operationList.
+    Criado para propósitos de debug.
+*/
 void FileManager::PrintOperations() {
     cout << "Operation List:" << endl;
     cout << "Total number of operations: " << operationList.size() << endl << endl;
@@ -49,4 +84,6 @@ FSOperation::FSOperation() {
     opcode = 0;
     filename = "";
     filesize = 0;
+    success = false;
+    reason = "";
 }
