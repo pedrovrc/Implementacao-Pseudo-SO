@@ -22,7 +22,6 @@ public:
     bool printer;
     bool scanner;
     bool modem;
-    bool modem;
     int disk;
     
     Process();
