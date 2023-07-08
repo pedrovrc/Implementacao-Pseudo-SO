@@ -26,6 +26,8 @@ public:
     void PrintProcess(Process& proc);
     void PrintOperationHistory();
     void PrintFileSystemState();
+    void PrintOperationHistory();
+    void PrintFileSystemState();
 };
 
 #endif

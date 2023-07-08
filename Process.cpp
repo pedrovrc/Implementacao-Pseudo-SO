@@ -115,6 +115,7 @@ Process::Process() {
     printer = false;
     scanner = false;
     modem = false;
+    modem = false;
     disk = 0;
 }
 
@@ -126,6 +127,7 @@ void Process::Reset() {
     size = 0;
     printer = false;
     scanner = false;
+    modem = false;
     modem = false;
     disk = 0;
 }

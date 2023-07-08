@@ -42,6 +42,7 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     result = ReadProcessInput(file1);
     if (result) {
         //processManager.PrintList(); // debug
+        //processManager.PrintList(); // debug
         cout << "Arquivo de processos lido com sucesso" << endl;
     } else {
         cout << "Erro ao ler arquivo de processos" << endl;
@@ -52,6 +53,8 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     // atualiza estado do sistema de arquivos
     result = ReadFileSystemInput(file2);
     if (result) {
+        //fileManager.PrintFiles();   // debug
+        //fileManager.PrintOperations();  // debug
         //fileManager.PrintFiles();   // debug
         //fileManager.PrintOperations();  // debug
         cout << "Arquivo de sistema de arquivos lido com sucesso" << endl;
@@ -159,6 +162,9 @@ bool PseudoOS::ReadProcessInput(fstream* file) {
             else if (value_counter == 1) holder.priority = value;
             else if (value_counter == 2) holder.processingTime = value;
             else if (value_counter == 3) holder.size = value;
+            else if (value_counter == 4) holder.printer = value;
+            else if (value_counter == 5) holder.scanner = value;
+            else if (value_counter == 6) holder.modem = value;
             else if (value_counter == 4) holder.printer = value;
             else if (value_counter == 5) holder.scanner = value;
             else if (value_counter == 6) holder.modem = value;

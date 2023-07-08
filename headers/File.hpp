@@ -33,6 +33,8 @@ public:
     int filesize;
     bool success;
     string reason;
+    bool success;
+    string reason;
 
     FSOperation();
 };
