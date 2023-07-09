@@ -138,6 +138,7 @@ void Process::ExecuteInstruction() {
     if (isRunning == false) {
         // print inicial
         cout << "process " << PID << " =>" << endl; 
+        cout << "P" << PID << " STARTED" << endl;
         // muda flag e incrementa contador de instrucoes (iniciar prints em 1)
         isRunning = true;
         instructionCount++;

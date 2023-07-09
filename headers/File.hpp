@@ -64,7 +64,7 @@ public:
     int GetOffset(char fileID);
     int findSpace(int fileSize);
     void allocate(int fileSize, int offset, char FileID);
-    void free(int FileSize, int offset);
+    void free(int offset);
 };
 
 #endif

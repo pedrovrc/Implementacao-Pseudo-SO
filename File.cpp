@@ -89,7 +89,7 @@ void FileManager::ExecuteFSOperation(int PID){
     while(operationList[0].PID != PID && operationList.empty() == false){
         buffer = "";
         operationList[0].success = false;
-        buffer += "Process " + to_string (operationList[0].PID) + " does not exist.";
+        buffer += "Process " + to_string (operationList[0].PID) + " does not exist";
         operationList[0].reason = buffer;
         Dispatcher::GetInstance()->writeFSHistory(operationList[0]);
         operationList.erase(operationList.begin());        
@@ -110,23 +110,23 @@ void FileManager::ExecuteFSOperation(int PID){
                         buffer += ", "; 
                     }
                 }
-                buffer += ").";
+                buffer += ")";
                 operationList[0].reason = buffer;
             }else{
                 operationList[0].success = false;
-                buffer += "Process " + to_string (operationList[0].PID) + " could not create file " + operationList[0].filename + " (not enough space).";
+                buffer += "Process " + to_string (operationList[0].PID) + " could not create file " + operationList[0].filename + " (not enough space)";
                 operationList[0].reason = buffer;
             }
         }else{
             offset = GetOffset(*operationList[0].filename.c_str());
             if(offset != -1){
-                free(operationList[0].filesize, offset);
+                free(offset);
                 operationList[0].success = true;
-                buffer += "Process " + to_string (operationList[0].PID) + " deleted file "+ operationList[0].filename + ".";
+                buffer += "Process " + to_string (operationList[0].PID) + " deleted file "+ operationList[0].filename;
                 operationList[0].reason = buffer;
             }else{
                 operationList[0].success = false;
-                buffer += "Process " + to_string (operationList[0].PID) + "could not delete file "+ operationList[0].filename + "because it does not exist.";
+                buffer += "Process " + to_string (operationList[0].PID) + "could not delete file "+ operationList[0].filename + "because it does not exist";
                 operationList[0].reason = buffer;
             }
         }
@@ -151,15 +151,18 @@ int FileManager::findSpace(int fileSize) {
 }
 
 void FileManager::allocate(int fileSize, int offset, char fileID){
-    for (int i = offset; i < fileSize; i++){
+    for (int i = offset; i < fileSize + offset; i++){
             occupationMap[i] = fileID;
     }        
 }
 
-void FileManager::free(int fileSize, int offset){
-    for (int i = offset; i < fileSize; i++){
-            occupationMap[i] = '0';
-    }        
+void FileManager::free(int offset){
+    int i = offset;
+    char name = occupationMap[i];
+    while (occupationMap[i] == name) {
+        occupationMap[i] = '0';
+        i++;
+    }    
 }
 
 
