@@ -96,8 +96,12 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
                 currentProcess = queueManager->GetUserProcess();
             } 
 
-            // se houver espaco na memoria
-            offset = memoryManager->findSpace(currentProcess->PID, currentProcess->size,currentProcess->priority);
+            offset = memoryManager->GetOffset(currentProcess->PID);
+            // se nao estiver em memoria
+            if(offset == -1){
+                offset = memoryManager->findSpace(*currentProcess);
+                memoryManager->allocate(*currentProcess, offset);
+            }
             if (offset != -1) {
                 // se CPU estiver vaga
                 if (currentProcessID == -1) {
@@ -116,10 +120,13 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
             currentProcess->ExecuteInstruction();
 
             // se processo executou instrucao final
-            if (currentProcess->instructionCount > currentProcess->processingTime) {
+            if (currentProcess->instructionCount > currentProcess->processingTime){
                 // retira processo da CPU
+                offset = memoryManager->GetOffset(currentProcess->PID);
+                memoryManager->free(currentProcess->size, offset);
                 currentProcessID = -1;
                 currentProcess = nullptr;
+                
             }
         }
  

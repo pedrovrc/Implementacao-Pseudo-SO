@@ -3,6 +3,7 @@
 
 #include <bits/stdc++.h>
 using namespace std;
+#include "Process.hpp"
 
 /*
     Class MemoryManager
@@ -22,7 +23,9 @@ public:
     MemoryManager();
     static MemoryManager* GetInstance();
     int GetOffset(int PID);
-    int findSpace(int PID, int process_size, int process_priority);
+    int findSpace(Process p);
+    void allocate(Process p, int offset);
+    void free(int processSize, int offset);
 };
 
 #endif

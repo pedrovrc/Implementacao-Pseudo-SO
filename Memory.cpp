@@ -46,43 +46,43 @@ int MemoryManager::GetOffset(int PID) {
     Retorna -1 se não encontrar segmento contíguo grande o suficiente.
     (Essa função atualmente não está implementada)
 */
-int MemoryManager::findSpace(int PID, int process_size, int process_priority) {
-    // indice do mapa de ocupação da memória
-    int offset;
+int MemoryManager::findSpace(Process p) {
     // checa se processo deve ser alocado no segmento de real time ou de usuário
-    if(process_priority == 0){
-        // testa se há espaço em memória
-        if(process_size <= freeRTMem){
-            //posiciona o indice do vetor ao final do ultimo proceso alocado
-            offset = realTimeMemSize - freeRTMem;
-            // preenche o mapa de ocupacao com o ID do processo nos blocos ocupados
-            for(int i = offset; i < process_size; i++){
-                occupationMap[i] = PID;
-            }
-            // atualiza a memória disponível
-            freeRTMem -= process_size;
-             // retorna o offset do inicio do processo
-            return offset;
-        }else{
-            // Espaco insuficiente
-            return -1;
+    int sizeCounter = 0, offset = 0;
+    if(p.priority == 0){
+        for (int i = 0; i < realTimeMemSize; i++){
+            if(occupationMap[i] != -1){
+                offset = i+1;
+                sizeCounter = 0;
+                continue;
+            } 
+            sizeCounter++;
+            if(sizeCounter == p.size)  return offset;
         }
+        
     }else{
-         // testa se há espaço em memória
-        if(process_size <= freeUserMem){
-            //posiciona o indice do vetor ao final do ultimo proceso alocado (considerando que os primeiros 64 blocos sao reservados para Real time)
-            offset = realTimeMemSize + userMemSize - freeUserMem;
-            // preenche o mapa de ocupacao com o ID do processo nos blocos ocupados
-            for(int i = offset; i < process_size; i++){
-                occupationMap[i] = PID;
-            }
-             // atualiza a memória disponível
-            freeUserMem -= process_size;
-            // retorna o offset do inicio do processo
-            return offset;
-        }else{
-            // Espaco insuficiente
-            return -1;
+        offset = 64;
+        for (int i = realTimeMemSize; i < (int)occupationMap.size(); i++){
+            if(occupationMap[i] != -1){
+                offset = i+1;
+                sizeCounter = 0;
+                continue;
+            } 
+            sizeCounter++;
+            if(sizeCounter == p.size) return offset;
         }
-    }     
+    }// Espaco insuficiente
+        return -1;    
+}
+
+void MemoryManager::allocate(Process p, int offset){
+    for (int i = offset; i < p.size; i++){
+            occupationMap[i] = p.PID;
+    }        
+}
+
+void MemoryManager::free(int processSize, int offset){
+    for (int i = offset; i < processSize; i++){
+            occupationMap[i] = -1;
+    }        
 }
