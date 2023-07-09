@@ -64,5 +64,13 @@ void QueueManager::RemoveFromExecQueue(int PID, int priority) {
     Retorna processo prioritário de acordo com política de escalonamento de múltiplas filas com realimentação.
 */
 Process* QueueManager::GetUserProcess() {
-
+    if(userP1Queue.empty() == false){
+        return userP1Queue[0];
+    }else if(userP2Queue.empty() == false){
+        return userP2Queue[0];
+    } else if(userP3Queue.empty() == false){
+        return userP3Queue[0];  
+    } else{
+        return nullptr;
+    }  
 }

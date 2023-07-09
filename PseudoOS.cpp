@@ -41,7 +41,7 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     // armazena detalhes dos processos
     result = ReadProcessInput(file1);
     if (result) {
-        //processManager.PrintList(); // debug
+        // processManager->PrintList(); // debug
         //processManager.PrintList(); // debug
         cout << "Arquivo de processos lido com sucesso" << endl;
     } else {
@@ -53,8 +53,8 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     // atualiza estado do sistema de arquivos
     result = ReadFileSystemInput(file2);
     if (result) {
-        //fileManager.PrintFiles();   // debug
-        //fileManager.PrintOperations();  // debug
+        // fileManager->PrintFiles();   // debug
+        // fileManager->PrintOperations();  // debug
         //fileManager.PrintFiles();   // debug
         //fileManager.PrintOperations();  // debug
         cout << "Arquivo de sistema de arquivos lido com sucesso" << endl;
@@ -94,10 +94,10 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
                 currentProcess = queueManager->realTimeQueue[0]; // FIFO
             } else {
                 currentProcess = queueManager->GetUserProcess();
-            }
+            } 
 
             // se houver espaco na memoria
-            offset = memoryManager->findSpace(currentProcess->size);
+            offset = memoryManager->findSpace(currentProcess->PID, currentProcess->size,currentProcess->priority);
             if (offset != -1) {
                 // se CPU estiver vaga
                 if (currentProcessID == -1) {

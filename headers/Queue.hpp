@@ -20,6 +20,9 @@ public:
     vector<Process*> creationQueue;
     vector<Process*> realTimeQueue;
     vector<Process*> userQueue;
+    vector<Process*> userP1Queue;
+    vector<Process*> userP2Queue;
+    vector<Process*> userP3Queue;
     static QueueManager* GetInstance();
     void AddProcessCreation(Process* in);
     void AddProcessExecution(Process* in);
