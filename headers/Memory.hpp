@@ -13,8 +13,8 @@ using namespace std;
 class MemoryManager {
     const int realTimeMemSize = 64;
     const int userMemSize = 960;
-    int freeRTMem = 64;
-    int freeUserMem = 960;
+    int freeRTMem;
+    int freeUserMem;
     vector<int> occupationMap;
     static MemoryManager* instance;
 

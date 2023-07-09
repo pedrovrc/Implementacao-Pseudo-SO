@@ -8,6 +8,11 @@ MemoryManager* MemoryManager::instance;
 MemoryManager::MemoryManager() {
     if (instance != nullptr) return;
     instance = this;
+    freeRTMem = 64;
+    freeUserMem = 960;
+    for(int i=0; i < 1024; i++){
+        occupationMap.push_back(-1);
+    }
 }
 
 MemoryManager* MemoryManager::GetInstance() {
@@ -57,7 +62,7 @@ int MemoryManager::findSpace(int PID, int process_size, int process_priority) {
             // atualiza a memória disponível
             freeRTMem -= process_size;
              // retorna o offset do inicio do processo
-            return (realTimeMemSize - (freeRTMem + process_size));
+            return offset;
         }else{
             // Espaco insuficiente
             return -1;
@@ -74,7 +79,7 @@ int MemoryManager::findSpace(int PID, int process_size, int process_priority) {
              // atualiza a memória disponível
             freeUserMem -= process_size;
             // retorna o offset do inicio do processo
-            return(userMemSize - (freeUserMem + process_size) + realTimeMemSize);
+            return offset;
         }else{
             // Espaco insuficiente
             return -1;
