@@ -19,6 +19,7 @@ using namespace std;
 */
 class Dispatcher {
     static Dispatcher* instance;
+    vector<FSOperation> FSOperationHistory;
 
 public:
     Dispatcher();
@@ -26,6 +27,7 @@ public:
     void PrintProcess(Process& proc);
     void PrintOperationHistory();
     void PrintFileSystemState();
+    void writeFSHistory(FSOperation op);
 };
 
 #endif

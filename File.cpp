@@ -1,4 +1,5 @@
 #include "headers/File.hpp"
+#include "headers/Dispatcher.hpp"
 
 // ----------------------------------------------------
 // Essa região do código implementa o padrão singleton.
@@ -73,7 +74,96 @@ void FileManager::PrintOperations() {
     cout << "------------ End of List ------------" << endl << endl;
 }
 
-File::File() {
+int FileManager::GetOffset(char fileID) {
+    for(int i = 0; i < occupationMap.size(); i++){
+        if(occupationMap[i] == fileID){
+            return i;
+        }
+    }
+    return -1;
+}
+
+void FileManager::ExecuteFSOperation(int PID){
+    string buffer;
+    int offset;
+    while(operationList[0].PID != PID && operationList.empty() == false){
+        buffer = "";
+        operationList[0].success = false;
+        buffer += "Process " + to_string (operationList[0].PID) + " does not exist.";
+        operationList[0].reason = buffer;
+        Dispatcher::GetInstance()->writeFSHistory(operationList[0]);
+        operationList.erase(operationList.begin());        
+    }
+    buffer = "";
+    if(operationList.empty() == false){
+        if(operationList[0].opcode == 0){
+            offset = findSpace(operationList[0].filesize);
+            if (offset != -1) {
+                allocate(operationList[0].filesize, offset, *operationList[0].filename.c_str());
+                operationList[0].success = true;
+                buffer += "Process " + to_string (operationList[0].PID) + " created file " + operationList[0].filename + " (blocks ";
+                for(int i= 0; i < operationList[0].filesize; i++ ){
+                    buffer += to_string (offset+i);
+                    if(i == operationList[0].filesize - 2){
+                        buffer += " and ";  
+                    }else if(i != operationList[0].filesize - 1){
+                        buffer += ", "; 
+                    }
+                }
+                buffer += ").";
+                operationList[0].reason = buffer;
+            }else{
+                operationList[0].success = false;
+                buffer += "Process " + to_string (operationList[0].PID) + " could not create file " + operationList[0].filename + " (not enough space).";
+                operationList[0].reason = buffer;
+            }
+        }else{
+            offset = GetOffset(*operationList[0].filename.c_str());
+            if(offset != -1){
+                free(operationList[0].filesize, offset);
+                operationList[0].success = true;
+                buffer += "Process " + to_string (operationList[0].PID) + " deleted file "+ operationList[0].filename + ".";
+                operationList[0].reason = buffer;
+            }else{
+                operationList[0].success = false;
+                buffer += "Process " + to_string (operationList[0].PID) + "could not delete file "+ operationList[0].filename + "because it does not exist.";
+                operationList[0].reason = buffer;
+            }
+        }
+        Dispatcher::GetInstance()->writeFSHistory(operationList[0]);
+        operationList.erase(operationList.begin());
+    }   
+}
+
+int FileManager::findSpace(int fileSize) {
+    // checa se processo deve ser alocado no segmento de real time ou de usuário
+    int sizeCounter = 0, offset = 0;
+        for (int i = 0; i < occupationMap.size(); i++){
+            if(occupationMap[i] != '0'){
+                offset = i+1;
+                sizeCounter = 0;
+                continue;
+            } 
+            sizeCounter++;
+            if(sizeCounter == fileSize)  return offset;
+        }
+        return -1;    
+}
+
+void FileManager::allocate(int fileSize, int offset, char fileID){
+    for (int i = offset; i < fileSize; i++){
+            occupationMap[i] = fileID;
+    }        
+}
+
+void FileManager::free(int fileSize, int offset){
+    for (int i = offset; i < fileSize; i++){
+            occupationMap[i] = '0';
+    }        
+}
+
+
+File::File(){
     name = "";
     offset = 0;
     size = 0;

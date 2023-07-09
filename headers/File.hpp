@@ -60,6 +60,11 @@ public:
     void AddOperation(FSOperation& in);
     void PrintFiles();
     void PrintOperations();
+    void ExecuteFSOperation(int PID);
+    int GetOffset(char fileID);
+    int findSpace(int fileSize);
+    void allocate(int fileSize, int offset, char FileID);
+    void free(int FileSize, int offset);
 };
 
 #endif

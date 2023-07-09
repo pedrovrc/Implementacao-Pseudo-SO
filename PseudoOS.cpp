@@ -98,11 +98,9 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
 
             offset = memoryManager->GetOffset(currentProcess->PID);
             // se nao estiver em memoria
-            if(offset == -1){
-                offset = memoryManager->findSpace(*currentProcess);
-                memoryManager->allocate(*currentProcess, offset);
-            }
+            if(offset == -1)  offset = memoryManager->findSpace(*currentProcess);
             if (offset != -1) {
+                memoryManager->allocate(*currentProcess, offset);
                 // se CPU estiver vaga
                 if (currentProcessID == -1) {
                     // processo toma posse da CPU

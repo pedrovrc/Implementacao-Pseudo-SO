@@ -4,6 +4,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 /*
     Class Process
 
@@ -49,7 +50,6 @@ public:
     static ProcessManager* GetInstance();
     void AddProcess(Process& in);
     bool ProcessExists(int PID);
-    // Process* GetProcess(int PID);
     int GetListSize();
     void PrintList();
 };

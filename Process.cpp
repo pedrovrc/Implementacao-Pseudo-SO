@@ -1,5 +1,6 @@
 #include "headers/Process.hpp"
 #include "headers/Queue.hpp"
+#include "headers/File.hpp"
 
 // ----------------------------------------------------
 // Essa região do código implementa o padrão singleton.
@@ -50,24 +51,6 @@ bool ProcessManager::ProcessExists(int PID) {
     }
     return false;
 }
-
-/*  FUNÇÃO CAUSANDO PROBLEMAS
-    Process* ProcessManager::GetProcess(int PID)
-
-    Retorna ponteiro para o processo requisitado caso seja encontrado na lista de processos.
-    Retorna ponteiro para objeto Process vazio caso contrário.
-    Recomenda-se usar esse método em conjunto com ProcessManager::ProcessExists.
-*/
-/*
-Process* ProcessManager::GetProcess(int PID) {
-    for (int i = 0; i < processList.size(); i++) {
-        if (processList[i].PID == PID) {
-            return &processList[i];
-        }
-    }
-    return new Process;
-}
-*/
 
 /*
     int ProcessManager::GetListSize()
@@ -164,6 +147,7 @@ void Process::ExecuteInstruction() {
     if (instructionCount <= processingTime) {
         // print de instrucoes
         cout << "P" << PID << " instruction " << instructionCount << endl;
+        FileManager::GetInstance()->ExecuteFSOperation(PID);
         instructionCount++;
     }
 

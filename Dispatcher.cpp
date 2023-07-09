@@ -39,24 +39,26 @@ void Dispatcher::PrintProcess(Process& proc) {
     cout << endl;
 }
 
+void Dispatcher::writeFSHistory(FSOperation op){
+    FSOperationHistory.push_back(op);
+}
+
 /*
     void Dispatcher::PrintOperationHistory()
 
     Imprime no terminal uma mensagem contendo o histórico de operações feitas no sistema de arquivos do Pseudo-SO.
 */
-void Dispatcher::PrintOperationHistory() {
-    FileManager* fileManager = fileManager->GetInstance();
-    
+void Dispatcher::PrintOperationHistory() {    
     cout << "File System =>" << endl << endl;;
 
-    for (int i = 0; i < fileManager->operationList.size(); i++) {
-        if (fileManager->operationList[i].success) {
+    for (int i = 0; i < FSOperationHistory.size(); i++) {
+        if (FSOperationHistory[i].success) {
             cout << "Operation " << i << " => Success" << endl;
         } else {
             cout << "Operation " << i << " => Failed" << endl;
         }
 
-        cout << fileManager->operationList[i].reason << endl << endl;
+        cout << FSOperationHistory[i].reason << endl << endl;
     }
     cout << endl;
 }
