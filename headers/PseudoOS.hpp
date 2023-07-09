@@ -26,13 +26,14 @@ class PseudoOS {
     ResourceManager* resourceManager;
     int currentProcessID;
 
+    bool ReadProcessInput(fstream* file);
+    bool ReadFileSystemInput(fstream* file);
+
 public:
     PseudoOS();
     static PseudoOS& GetInstance();
     
     bool Run(fstream* file1, fstream* file2);
-    bool ReadProcessInput(fstream* file);
-    bool ReadFileSystemInput(fstream* file);
 };
 
 #endif

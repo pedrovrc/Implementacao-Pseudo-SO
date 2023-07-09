@@ -62,9 +62,9 @@ public:
     void PrintOperations();
     void ExecuteFSOperation(int PID);
     int GetOffset(char fileID);
-    int findSpace(int fileSize);
-    void allocate(int fileSize, int offset, char FileID);
-    void free(int offset);
+    int FindSpace(int fileSize);
+    void Allocate(int fileSize, int offset, char FileID);
+    void Free(int offset);
 };
 
 #endif

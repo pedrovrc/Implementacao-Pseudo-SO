@@ -3,7 +3,14 @@ using namespace std;
 
 #include "headers/PseudoOS.hpp"
 
+/*
+    int main(int argc, char *argv[])
+
+    Função inicial para pegar os argumentos da linha de comando e executar o Pseudo-SO.
+*/
 int main(int argc, char *argv[]) {
+    cout << endl;
+
     if (argc <= 2) {
         cout << "Erro! Insira os arquivos via linha de comando." << endl;
         return 0;
@@ -34,6 +41,7 @@ int main(int argc, char *argv[]) {
     } else {
         cout << "Sistema executou com erros." << endl;
     }
+    cout << endl;
 
     fileA->close();
     fileB->close();

@@ -9,6 +9,9 @@ using namespace std;
     Class MemoryManager
 
     Classe que representa o Gerenciador de Memória do Pseudo-SO.
+    É responsável por:
+        - Alocar e liberar memória para processos;
+        - Verificar presença ou ausência de processos em memória e fornecer seus offsets.
     Essa classe segue o padrão singleton.
 */
 class MemoryManager {
@@ -23,9 +26,9 @@ public:
     MemoryManager();
     static MemoryManager* GetInstance();
     int GetOffset(int PID);
-    int findSpace(Process p);
-    void allocate(Process p, int offset);
-    void free(int processSize, int offset);
+    int FindSpace(Process p);
+    void Allocate(Process p, int offset);
+    void Free(int processSize, int offset);
 };
 
 #endif

@@ -31,7 +31,8 @@ PseudoOS& PseudoOS::GetInstance() {
         - Lê e armazena de dados de entrada;
         - Cria processo Dispatcher;
         - Executa loop de criação e execução de processos;
-        - Executa loop de operações no sistema de arquivos; (ainda não implementado)
+            - A cada instrucao executada, se o processo tiver alguma
+            operacao de sistema de arquivos para fazer, a executa.
         - Imprime mensagens finais do Dispatcher ao final da execução.
 */
 bool PseudoOS::Run (fstream* file1, fstream* file2) {
@@ -42,7 +43,6 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     result = ReadProcessInput(file1);
     if (result) {
         // processManager->PrintList(); // debug
-        //processManager.PrintList(); // debug
         cout << "Arquivo de processos lido com sucesso" << endl;
     } else {
         cout << "Erro ao ler arquivo de processos" << endl;
@@ -55,8 +55,6 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     if (result) {
         // fileManager->PrintFiles();   // debug
         // fileManager->PrintOperations();  // debug
-        //fileManager.PrintFiles();   // debug
-        //fileManager.PrintOperations();  // debug
         cout << "Arquivo de sistema de arquivos lido com sucesso" << endl;
     } else {
         cout << "Erro ao ler arquivo de sistema de arquivos" << endl;
@@ -98,9 +96,9 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
 
             offset = memoryManager->GetOffset(currentProcess->PID);
             // se nao estiver em memoria
-            if(offset == -1)  offset = memoryManager->findSpace(*currentProcess);
+            if (offset == -1) offset = memoryManager->FindSpace(*currentProcess);
             if (offset != -1) {
-                memoryManager->allocate(*currentProcess, offset);
+                memoryManager->Allocate(*currentProcess, offset);
                 // se CPU estiver vaga
                 if (currentProcessID == -1) {
                     // processo toma posse da CPU
@@ -121,7 +119,7 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
             if (currentProcess->instructionCount > currentProcess->processingTime){
                 // retira processo da CPU
                 offset = memoryManager->GetOffset(currentProcess->PID);
-                memoryManager->free(currentProcess->size, offset);
+                memoryManager->Free(currentProcess->size, offset);
                 currentProcessID = -1;
                 currentProcess = nullptr;
                 

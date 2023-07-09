@@ -40,13 +40,13 @@ int MemoryManager::GetOffset(int PID) {
 }
 
 /*
-    int MemoryManager::findSpace(int process_size)
+    int MemoryManager::FindSpace(int process_size)
 
     Retorna offset para segmento contíguo de tamanho suficiente para o requisitado pela entrada.
     Retorna -1 se não encontrar segmento contíguo grande o suficiente.
     (Essa função atualmente não está implementada)
 */
-int MemoryManager::findSpace(Process p) {
+int MemoryManager::FindSpace(Process p) {
     // checa se processo deve ser alocado no segmento de real time ou de usuário
     int sizeCounter = 0, offset = 0;
     if(p.priority == 0){
@@ -75,14 +75,24 @@ int MemoryManager::findSpace(Process p) {
         return -1;    
 }
 
-void MemoryManager::allocate(Process p, int offset){
+/*
+    void MemoryManager::Allocate(Process p, int offset)
+
+    Preenche espaços de memória com o ID do processo a partir do offset fornecido.
+*/
+void MemoryManager::Allocate(Process p, int offset) {
     for (int i = offset; i < p.size; i++){
             occupationMap[i] = p.PID;
     }        
 }
 
-void MemoryManager::free(int processSize, int offset){
-    for (int i = offset; i < processSize; i++){
+/*
+    void MemoryManager::Free(int processSize, int offset)
+
+    Apaga conteúdo de um processo em memória a partir de um offset fornecido.
+*/
+void MemoryManager::Free(int processSize, int offset) {
+    for (int i = offset; i < processSize + offset; i++){
             occupationMap[i] = -1;
     }        
 }
