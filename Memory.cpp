@@ -44,12 +44,16 @@ int MemoryManager::GetOffset(int PID) {
 
     Retorna offset para segmento contíguo de tamanho suficiente para o requisitado pela entrada.
     Retorna -1 se não encontrar segmento contíguo grande o suficiente.
+    Retorna -2 se processo requisitado for maior do que memória total existente.
     (Essa função atualmente não está implementada)
 */
 int MemoryManager::FindSpace(Process p) {
     // checa se processo deve ser alocado no segmento de real time ou de usuário
     int sizeCounter = 0, offset = 0;
+
     if(p.priority == 0){
+        if (p.size > 64) return -2;
+
         for (int i = 0; i < realTimeMemSize; i++){
             if(occupationMap[i] != -1){
                 offset = i+1;
@@ -61,6 +65,8 @@ int MemoryManager::FindSpace(Process p) {
         }
         
     }else{
+        if (p.size > 960) return -2;
+
         offset = 64;
         for (int i = realTimeMemSize; i < (int)occupationMap.size(); i++){
             if(occupationMap[i] != -1){

@@ -69,7 +69,9 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
     Process* currentProcess = nullptr;
 
     // enquanto houver processos a serem executados/criados ou CPU estiver ocupada
-    while (queueManager->creationQueue.empty() == false || currentProcessID != -1) {
+    while ( queueManager->creationQueue.empty() == false ||
+            queueManager->realTimeQueue.empty() == false ||
+            currentProcessID != -1 ) {
         //cout << "quantum counter: " << quantumCount << endl << endl;
 
         // para cada processo na lista de processos de entrada
@@ -94,10 +96,14 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
                 currentProcess = queueManager->GetUserProcess();
             } 
 
+            // busca
             offset = memoryManager->GetOffset(currentProcess->PID);
-            // se nao estiver em memoria
+            // se nao estiver em memoria busca espaco para alocacao
             if (offset == -1) offset = memoryManager->FindSpace(*currentProcess);
-            if (offset != -1) {
+
+            // se encontrou espaco
+            if (offset >= 0) {
+                // aloca memoria
                 memoryManager->Allocate(*currentProcess, offset);
                 // se CPU estiver vaga
                 if (currentProcessID == -1) {
@@ -106,6 +112,13 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
                     queueManager->RemoveFromExecQueue(currentProcess->PID, currentProcess->priority);
                     dispatcher->PrintProcess(*currentProcess);
                 }
+            // caso tamanho do processo for maior do que memoria total
+            } else if (offset == -2) {
+                // remove da fila de execucao
+                queueManager->RemoveFromExecQueue(currentProcess->PID, currentProcess->priority);
+                cout << endl << "Process " << currentProcess->PID << " was removed from the queue due to insufficient memory size" << endl; 
+                cout << "Process size: " << currentProcess->size << endl;
+                cout << "Total memory: 64" << endl << endl;
             }
         }
 
