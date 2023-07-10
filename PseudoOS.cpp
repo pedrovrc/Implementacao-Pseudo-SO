@@ -117,9 +117,11 @@ bool PseudoOS::Run (fstream* file1, fstream* file2) {
 
             // se processo executou instrucao final
             if (currentProcess->instructionCount > currentProcess->processingTime){
-                // retira processo da CPU
+                // libera memória ocupada por processo
                 offset = memoryManager->GetOffset(currentProcess->PID);
                 memoryManager->Free(currentProcess->size, offset);
+
+                // retira processo da CPU
                 currentProcessID = -1;
                 currentProcess = nullptr;
                 
