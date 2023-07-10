@@ -13,3 +13,5 @@ Visão geral do sistema:
   - Classes Manager:
 
       Classes que implementam os diversos módulos do sistema implementado.
+
+Mais informações podem ser encontradas no relatório em anexo a este repositório.
