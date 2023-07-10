@@ -12,10 +12,17 @@ using namespace std;
 */
 class ResourceManager {
     static ResourceManager* instance;
+    vector<int> scannerQueue;
+    vector<int> printerQueue1;
+    vector<int> printerQueue2;
+    vector<int> modemQueue;
+    vector<int> SATAQueue1;
+    vector<int> SATAQueue2;
 
 public:
     ResourceManager();
     static ResourceManager* GetInstance();
+    void IORequest();
 };
 
 #endif

@@ -183,7 +183,7 @@ bool PseudoOS::ReadProcessInput(fstream* file) {
             else if (value_counter == 4) holder.printer = value;
             else if (value_counter == 5) holder.scanner = value;
             else if (value_counter == 6) holder.modem = value;
-            else if (value_counter == 7) holder.disk = value;
+            else if (value_counter == 7) holder.SATA = value;
 
             value_counter++;
         }

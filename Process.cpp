@@ -94,11 +94,11 @@ Process::Process() {
     priority = 0;
     processingTime = 0;
     size = 0;
-    printer = false;
+    printer = 0;
     scanner = false;
     modem = false;
     modem = false;
-    disk = 0;
+    SATA = 0;
 }
 
 void Process::Reset() {
@@ -107,11 +107,11 @@ void Process::Reset() {
     priority = 0;
     processingTime = 0;
     size = 0;
-    printer = false;
+    printer = 0;
     scanner = false;
     modem = false;
     modem = false;
-    disk = 0;
+    SATA = 0;
 }
 
 /*

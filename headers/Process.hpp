@@ -21,10 +21,10 @@ public:
     int priority;
     int processingTime;
     int size;
-    bool printer;
+    int printer;
     bool scanner;
     bool modem;
-    int disk;
+    int SATA;
     
     Process();
     void Reset();

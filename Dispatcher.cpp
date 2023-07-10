@@ -35,7 +35,7 @@ void Dispatcher::PrintProcess(Process& proc) {
     cout << "\tprinters: " << proc.printer << endl;
     cout << "\tscanners: " << proc.scanner << endl;
     cout << "\tmodems: " << proc.modem << endl;
-    cout << "\tdrives: " << proc.disk << endl;
+    cout << "\tdrives: " << proc.SATA << endl;
     cout << endl;
 }
 
